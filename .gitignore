@@ -1,0 +1,19 @@
+# Environment files with sensitive data
+.env
+.env.local
+.env.production
+.env.staging
+
+# Configuration files with credentials
+config.json
+credentials.json
+*-config.sh
+*-credentials.*
+powerprio-config.sh
+
+# API keys and secrets
+api-keys.txt
+secrets.txt
+
+# Local development files
+*.local.*
