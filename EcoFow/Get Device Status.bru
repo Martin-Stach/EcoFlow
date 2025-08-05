@@ -1,0 +1,27 @@
+meta {
+  name: Get Device Status
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/iot-open/sign/device/quota
+  body: json
+  auth: inherit
+}
+
+headers {
+  accessKey: {{accessKey}}
+  timestamp: {{timestamp}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "sn": "{{deviceSerial}}"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
