@@ -4,21 +4,20 @@ meta {
   seq: 1
 }
 
-get {
+post {
   url: {{baseUrl}}/iot-open/sign/device/quota
   body: json
-  auth: inherit
-}
-
-headers {
-  accessKey: {{accessKey}}
-  timestamp: {{timestamp}}
-  Content-Type: application/json
+  auth: none
 }
 
 body:json {
   {
-    "sn": "{{deviceSerial}}"
+    "sn": {{deviceSerial}},
+    "params": {
+      "quotas": [
+        "20_1.supplyPriority"
+      ]
+    }
   }
 }
 

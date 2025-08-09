@@ -1,0 +1,54 @@
+script:pre-request {
+  const crypto = require('crypto');
+  
+  // Get environment variables
+  const accessKey = bru.getEnvVar('accessKey');
+  const secretKey = bru.getEnvVar('secretKey');
+  
+  // Validate required variables
+  if (!accessKey || accessKey === 'your_access_key_here') {
+      throw new Error('ECOFLOW_ACCESS_KEY not set in environment');
+  }
+  
+  if (!secretKey || secretKey === 'your_secret_key_here') {
+      throw new Error('ECOFLOW_SECRET_KEY not set in environment');
+  }
+  
+  // Generate timestamp
+  const timestamp = Date.now();
+  
+  // Generate nonce (random 6 digits int)
+  const nonce = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);
+  // const nonce = 421452;
+  
+  // Get request details
+  const method = req.getMethod().toUpperCase();
+  const url = req.getUrl();
+  const body = req.getBody() || '';
+  
+  // Create signature string: accessKey + timestamp + nonce + method + url + body
+  const signatureString = `accessKey=${accessKey}&nonce=${nonce}&timestamp=${timestamp}`;
+  
+  // Generate HMAC-SHA256 signature
+  const signature = crypto.createHmac('sha256', secretKey)
+    .update(signatureString)
+    .digest('hex');
+  
+  // Debug output (remove in production)
+  console.log('Signature Details:');
+  console.log('  Access Key:', accessKey);
+  console.log('  Timestamp:', timestamp);
+  console.log('  Nonce:', nonce);
+  console.log('  Method:', method);
+  console.log('  URL:', url);
+  console.log('  Body:', body);
+  console.log('  Signature String:', signatureString);
+  console.log('  Signature:', signature);
+  
+  // Set headers
+  req.setHeader('accessKey', accessKey);
+  req.setHeader('timestamp', timestamp.toString());
+  req.setHeader('nonce', nonce);
+  req.setHeader('sign', signature);
+  req.setHeader('Content-Type', 'application/json');
+}

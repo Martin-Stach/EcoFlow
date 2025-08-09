@@ -1,0 +1,19 @@
+meta {
+  name: Query All Quota
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/iot-open/sign/device/quota/all?sn={{deviceSerial}}
+  body: json
+  auth: none
+}
+
+params:query {
+  sn: {{deviceSerial}}
+}
+
+settings {
+  encodeUrl: true
+}
