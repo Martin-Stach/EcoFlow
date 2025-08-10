@@ -1,0 +1,33 @@
+meta {
+  name: PUT Device Status
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{baseUrl}}/iot-open/sign/device/quota?sn={{deviceSerial}}
+  body: json
+  auth: none
+}
+
+params:query {
+  sn: {{deviceSerial}}
+}
+
+headers {
+  Content-Type: application/json;charset=UTF-8
+}
+
+body:json {
+  {
+    "sn":"HW51ZEH4SF685360",
+    "cmdCode":"WN511_SET_SUPPLY_PRIORITY_PACK",
+    "params": {
+      "supplyPriority": 0
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}
