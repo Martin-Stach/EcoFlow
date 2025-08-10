@@ -1,0 +1,209 @@
+{
+  "name": "EcoFow",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "Get Device Status",
+      "filename": "Get Device Status.bru",
+      "seq": 1,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "{{baseUrl}}/iot-open/sign/device/quota",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=UTF-8",
+            "enabled": true
+          }
+        ],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"sn\": {{deviceSerial}},\n  \"params\": {\n    \"quotas\": [\n      \"20_1.supplyPriority\"\n    ]\n  }\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Device List",
+      "filename": "Device List.bru",
+      "seq": 2,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "{{baseUrl}}/iot-open/sign/device/list",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Query All Quota",
+      "filename": "Query All Quota.bru",
+      "seq": 4,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "{{baseUrl}}/iot-open/sign/device/quota/all?sn={{deviceSerial}}",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "sn",
+            "value": "{{deviceSerial}}",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": "",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get Delta2Max Quota",
+      "filename": "Get Delta2Max Quota.bru",
+      "seq": 5,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "{{baseUrl}}/iot-open/sign/device/quota",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json;charset=UTF-8",
+            "enabled": true
+          }
+        ],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n    \"sn\": \"R351ZFB4HF6L0030\",\n    \"params\": {\n        \"quotas\": [\n            \"pd.newAcAutoOnCfg\",\n            \"pd.minAcSoc\"\n        ]\n    }\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    }
+  ],
+  "activeEnvironmentUid": "3HLNbwaTBTXC9eKfXL7gG",
+  "environments": [
+    {
+      "variables": [
+        {
+          "name": "deviceSerial",
+          "value": "HW51ZEH4SF685360",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "baseUrl",
+          "value": "https://api-e.ecoflow.com",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "accessKey",
+          "value": "6gQ1E2A13aNLSJEFiDMlgrEHbcpWa7So",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "timestamp",
+          "value": "{{$timestamp}}",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        },
+        {
+          "name": "secretKey",
+          "value": "",
+          "enabled": true,
+          "secret": true,
+          "type": "text"
+        }
+      ],
+      "name": "EcoFlow"
+    }
+  ],
+  "root": {
+    "request": {
+      "script": {
+        "req": "const crypto = require('crypto');\n\n// Get environment variables\nconst accessKey = bru.getEnvVar('accessKey');\nconst secretKey = bru.getEnvVar('secretKey');\n\n// Validate required variables\nif (!accessKey || accessKey === 'your_access_key_here') {\n    throw new Error('ECOFLOW_ACCESS_KEY not set in environment');\n}\n\nif (!secretKey || secretKey === 'your_secret_key_here') {\n    throw new Error('ECOFLOW_SECRET_KEY not set in environment');\n}\n\n// Generate timestamp\nconst timestamp = Date.now();\n\n// Generate nonce (random 6 digits int)\nconst nonce = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);\n// const nonce = 421452;\n\n// Get request details\nconst method = req.getMethod().toUpperCase();\nconst url = req.getUrl();\nconst body = req.getBody() || '';\n\n// Create signature string: accessKey + timestamp + nonce + method + url + body\nconst signatureString = `accessKey=${accessKey}&nonce=${nonce}&timestamp=${timestamp}`;\n\n// Generate HMAC-SHA256 signature\nconst signature = crypto.createHmac('sha256', secretKey)\n  .update(signatureString)\n  .digest('hex');\n\n// Debug output (remove in production)\nconsole.log('Signature Details:');\nconsole.log('  Access Key:', accessKey);\nconsole.log('  Timestamp:', timestamp);\nconsole.log('  Nonce:', nonce);\nconsole.log('  Method:', method);\nconsole.log('  URL:', url);\nconsole.log('  Body:', body);\nconsole.log('  Signature String:', signatureString);\nconsole.log('  Signature:', signature);\n\n// Set headers\nreq.setHeader('accessKey', accessKey);\nreq.setHeader('timestamp', timestamp.toString());\nreq.setHeader('nonce', nonce);\nreq.setHeader('sign', signature);\nreq.setHeader('Content-Type', 'application/json');"
+      }
+    }
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "EcoFow",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0,
+    "filesCount": 0
+  }
+}
